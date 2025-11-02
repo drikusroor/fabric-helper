@@ -38,6 +38,7 @@ function getMinecraftDir() {
   return join(homedir(), ".minecraft");
 }
 var INSTALLER = "fabric-installer-1.1.0.jar";
+var INSTALLER_URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.0/fabric-installer-1.1.0.jar";
 var SCRIPT_DIR = import.meta.dir;
 var LOCAL_MODS_DIR = join(SCRIPT_DIR, "minecraft", "mods");
 var LOCAL_SHADERS_DIR = join(SCRIPT_DIR, "minecraft", "shaderpacks");
@@ -131,6 +132,28 @@ function findExistingShader(slug) {
   }
   return null;
 }
+async function ensureFabricInstaller() {
+  if (existsSync(INSTALLER)) {
+    log("cyan", `  \u2139 Fabric installer already present: ${INSTALLER}`);
+    return;
+  }
+  log("blue", "Downloading Fabric Installer...");
+  try {
+    const response = await fetch(INSTALLER_URL, {
+      headers: { "User-Agent": USER_AGENT }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    const arrayBuffer = await response.arrayBuffer();
+    await Bun.write(INSTALLER, arrayBuffer);
+    log("green", `  \u2713 Downloaded ${INSTALLER}`);
+  } catch (error) {
+    log("red", `  \u2717 Failed to download Fabric Installer: ${error}`);
+    log("yellow", `  You can manually download from: ${INSTALLER_URL}`);
+    process.exit(1);
+  }
+}
 async function main() {
   log("blue", "\u2554\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2557");
   log("blue", "\u2551  Automated Fabric Mod Installer       \u2551");
@@ -149,11 +172,9 @@ async function main() {
   console.log();
   log("green", `Installing for Minecraft ${mcVersion}`);
   console.log();
-  if (!existsSync(INSTALLER)) {
-    log("red", `Error: ${INSTALLER} not found!`);
-    log("yellow", "Download it from: https://fabricmc.net/use/installer/");
-    process.exit(1);
-  }
+  log("green", "[0/5] Checking Fabric Installer...");
+  await ensureFabricInstaller();
+  console.log();
   try {
     await $`java -version`.quiet();
   } catch {

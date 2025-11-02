@@ -59,6 +59,7 @@ function getMinecraftDir(): string {
 
 // Configuration
 const INSTALLER = "fabric-installer-1.1.0.jar";
+const INSTALLER_URL = "https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.0/fabric-installer-1.1.0.jar";
 const SCRIPT_DIR = import.meta.dir;
 const LOCAL_MODS_DIR = join(SCRIPT_DIR, "minecraft", "mods");
 const LOCAL_SHADERS_DIR = join(SCRIPT_DIR, "minecraft", "shaderpacks");
@@ -182,6 +183,35 @@ function findExistingShader(slug: string): string | null {
 	return null;
 }
 
+// Download Fabric installer if not present
+async function ensureFabricInstaller(): Promise<void> {
+	if (existsSync(INSTALLER)) {
+		log("cyan", `  ℹ Fabric installer already present: ${INSTALLER}`);
+		return;
+	}
+
+	log("blue", "Downloading Fabric Installer...");
+
+	try {
+		const response = await fetch(INSTALLER_URL, {
+			headers: { "User-Agent": USER_AGENT },
+		});
+
+		if (!response.ok) {
+			throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+		}
+
+		const arrayBuffer = await response.arrayBuffer();
+		await Bun.write(INSTALLER, arrayBuffer);
+
+		log("green", `  ✓ Downloaded ${INSTALLER}`);
+	} catch (error) {
+		log("red", `  ✗ Failed to download Fabric Installer: ${error}`);
+		log("yellow", `  You can manually download from: ${INSTALLER_URL}`);
+		process.exit(1);
+	}
+}
+
 // Main installation flow
 async function main() {
 	log("blue", "╔════════════════════════════════════════╗");
@@ -213,12 +243,10 @@ async function main() {
 	log("green", `Installing for Minecraft ${mcVersion}`);
 	console.log();
 
-	// Check prerequisites
-	if (!existsSync(INSTALLER)) {
-		log("red", `Error: ${INSTALLER} not found!`);
-		log("yellow", "Download it from: https://fabricmc.net/use/installer/");
-		process.exit(1);
-	}
+	// Ensure Fabric Installer is available
+	log("green", "[0/5] Checking Fabric Installer...");
+	await ensureFabricInstaller();
+	console.log();
 
 	// Check Java
 	try {
