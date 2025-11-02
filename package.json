@@ -4,9 +4,7 @@
 	"description": "A helper tool for managing Minecraft Fabric mods and shaderpacks",
 	"module": "index.ts",
 	"type": "module",
-	"bin": {
-		"fabric-helper": "./index.ts"
-	},
+	"bin": "./index.ts",
 	"scripts": {
 		"start": "bun run index.ts",
 		"lint": "bunx @biomejs/biome check .",
