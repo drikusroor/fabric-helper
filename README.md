@@ -1,6 +1,10 @@
 # Fabric Helper 🎮
 
-An automated Fabric mod installer script for macOS that downloads and installs Minecraft Fabric mods and shaders with a single command.
+An automated Fabric mod installer that downloads and installs Minecraft Fabric mods and shaders with a single command.
+
+**Now available in two versions:**
+- 🚀 **Cross-platform TypeScript/Bun version** (Recommended - works on Windows, macOS, Linux)
+- 🍎 **Bash version** (macOS/Linux only)
 
 ## Features
 
@@ -11,21 +15,30 @@ An automated Fabric mod installer script for macOS that downloads and installs M
 - 🔄 **Smart Installation** - Checks for existing mods to avoid duplicates
 - ⚙️ **Version Matching** - Ensures mods are compatible with your Minecraft version
 - 🔐 **Safe Cleanup** - Backs up existing mods before cleanup
-- 🎯 **Minimal Dependencies** - Requires only Java, curl, and jq
+- � **Cross-Platform** - TypeScript version works on Windows, macOS, and Linux
+- �🎯 **Minimal Dependencies** - TypeScript version only needs Bun and Java
 
 ## Prerequisites
 
-- macOS
-- Java (installed and available in PATH)
-- `curl` (usually pre-installed on macOS)
-- `jq` (JSON processor - script will auto-install via Homebrew if missing)
+### For TypeScript/Bun Version (Recommended)
+- **Bun** (install from [bun.sh](https://bun.sh))
+- **Java** (installed and available in PATH)
+- `fabric-installer-1.1.0.jar` (place in the project root directory)
+
+### For Bash Version (macOS/Linux only)
+- **macOS or Linux**
+- **Java** (installed and available in PATH)
+- `curl` (usually pre-installed)
+- `jq` (JSON processor - bash script will auto-install via Homebrew if missing)
 - `fabric-installer-1.1.0.jar` (place in the project root directory)
 
 ## Project Structure
 
 ```
 fabric-helper/
-├── fabric_helper.sh              # Main installation script
+├── index.ts                      # TypeScript/Bun version (cross-platform)
+├── fabric_helper.sh              # Bash version (macOS/Linux)
+├── package.json                  # Bun project configuration
 ├── README.md                     # This file
 ├── minecraft/
 │   ├── mods/                     # Place your local mods here (.jar files)
@@ -45,8 +58,18 @@ cd ~/repos/fabric-helper
 curl -L -o fabric-installer-1.1.0.jar https://maven.fabricmc.net/net/fabricmc/fabric-installer/1.1.0/fabric-installer-1.1.0.jar
 ```
 
-### 2. Make Script Executable
+### 2. Install Dependencies & Make Scripts Executable
 
+**For TypeScript/Bun version:**
+```bash
+# Install Bun if you haven't already
+curl -fsSL https://bun.sh/install | bash
+
+# Install dependencies
+bun install
+```
+
+**For Bash version:**
 ```bash
 chmod +x fabric_helper.sh
 ```
@@ -73,13 +96,29 @@ minecraft/
 
 ## Usage
 
-Run the script and follow the prompts:
+### TypeScript/Bun Version (Recommended - Cross-Platform)
+
+Run with Bun:
+
+```bash
+bun run start
+```
+
+Or directly:
+
+```bash
+bun index.ts
+```
+
+### Bash Version (macOS/Linux)
 
 ```bash
 ./fabric_helper.sh
 ```
 
-The script will:
+### What Happens During Installation
+
+Both versions will:
 
 1. **Ask for Minecraft version** - Enter the version you want to install for (e.g., `1.21.10`, `1.20.4`)
 2. **Ask about cleanup** - Optionally clean up existing mods (with automatic backup)
@@ -116,43 +155,60 @@ The script automatically downloads and installs these mods:
 
 Place mods in your local directory before running the script:
 
-```
+```text
 minecraft/mods/
 ├── custom-mod-1.jar
 └── custom-mod-2.jar
 ```
 
-These are copied to: `~/Library/Application Support/minecraft/mods`
+**These are copied to:**
+
+- **macOS:** `~/Library/Application Support/minecraft/mods`
+- **Windows:** `%APPDATA%\.minecraft\mods`
+- **Linux:** `~/.minecraft/mods`
 
 ### Downloaded Mods (After Running)
 
 Mods are automatically installed to:
 
-```
-~/Library/Application Support/minecraft/mods/
-```
+- **macOS:** `~/Library/Application Support/minecraft/mods/`
+- **Windows:** `%APPDATA%\.minecraft\mods\`
+- **Linux:** `~/.minecraft/mods/`
 
 ### Shaderpacks
 
 Shaders are installed to:
 
-```
-~/Library/Application Support/minecraft/shaderpacks/
-```
+- **macOS:** `~/Library/Application Support/minecraft/shaderpacks/`
+- **Windows:** `%APPDATA%\.minecraft\shaderpacks\`
+- **Linux:** `~/.minecraft/shaderpacks/`
 
 ## Backup Locations
 
-If you choose to clean up existing mods, they are backed up to:
+If you choose to clean up existing mods, they are backed up to your Desktop:
 
-```
-~/Desktop/minecraft_mods_backup_YYYYMMDD_HHMMSS/
+```text
+~/Desktop/minecraft_mods_backup_YYYY-MM-DD/
 ├── mods/
 └── shaderpacks/
 ```
 
 ## Troubleshooting
 
-### Script won't run
+### TypeScript/Bun version won't run
+
+```bash
+# Make sure Bun is installed
+bun --version
+
+# If not, install Bun
+curl -fsSL https://bun.sh/install | bash
+
+# On Windows (PowerShell)
+powershell -c "irm bun.sh/install.ps1 | iex"
+```
+
+### Bash script won't run (macOS/Linux)
 
 ```bash
 # Make sure the script is executable
@@ -162,11 +218,15 @@ chmod +x fabric_helper.sh
 ### Java not found
 
 ```bash
-# Install Java if needed
+# macOS/Linux - Install Java
 brew install openjdk@21
+
+# Windows - Download from https://adoptium.net/
 ```
 
-### jq not installed
+### Bun script: "jq not installed" (only for bash version)
+
+The TypeScript/Bun version doesn't need jq. If using the bash version:
 
 ```bash
 # Install jq
