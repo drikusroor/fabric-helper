@@ -1,8 +1,12 @@
 {
 	"name": "fabric-helper",
+	"version": "1.0.0",
+	"description": "A helper tool for managing Minecraft Fabric mods and shaderpacks",
 	"module": "index.ts",
 	"type": "module",
-	"private": true,
+	"bin": {
+		"fabric-helper": "./index.ts"
+	},
 	"scripts": {
 		"start": "bun run index.ts",
 		"lint": "bunx @biomejs/biome check .",
