@@ -1,0 +1,8 @@
+# Ignore jar/toml in minecraft/mods and zip files in minecraft/shaderpacks
+minecraft/mods/**/*.jar
+minecraft/mods/**/*.toml
+minecraft/shaderpacks/**/*.zip
+
+# Ignore system files
+.DS_Store
+Thumbs.db
