@@ -1,6 +1,6 @@
 {
 	"name": "@drikusroor/fabric-helper",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A helper tool for managing Minecraft Fabric mods and shaderpacks",
 	"main": "index.ts",
 	"module": "index.ts",
