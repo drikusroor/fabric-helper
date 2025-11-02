@@ -1,16 +1,24 @@
 {
-	"name": "fabric-helper",
+	"name": "@drikusroor/fabric-helper",
 	"version": "1.0.2",
 	"description": "A helper tool for managing Minecraft Fabric mods and shaderpacks",
 	"main": "index.ts",
 	"module": "index.ts",
 	"type": "module",
+	"publishConfig": {
+		"registry": "https://npm.pkg.github.com"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/drikusroor/fabric-helper.git"
+	},
 	"bin": {
 		"install-mods": "./dist/index.js"
 	},
 	"scripts": {
 		"start": "bun run index.ts",
 		"build": "bun build ./index.ts --outfile=./dist/index.js --target=bun",
+		"publish": "npm publish",
 		"lint": "bunx @biomejs/biome check .",
 		"format": "bunx @biomejs/biome format --write ."
 	},
