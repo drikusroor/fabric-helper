@@ -1,0 +1,14 @@
+.git
+.github
+.vscode
+.gitignore
+*.md
+CLAUDE.md
+MIGRATION.md
+tsconfig.json
+biome.json
+*.ts
+*.lock
+fabric_helper.sh
+minecraft/
+.npmignore
