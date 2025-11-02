@@ -18,7 +18,7 @@
 	"scripts": {
 		"start": "bun run index.ts",
 		"build": "bun build ./index.ts --outfile=./dist/index.js --target=bun",
-		"publish": "npm publish",
+		"publish": "bun publish",
 		"lint": "bunx @biomejs/biome check .",
 		"format": "bunx @biomejs/biome format --write ."
 	},
