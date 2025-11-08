@@ -249,11 +249,78 @@ async function main() {
 	console.log();
 
 	// Check Java
+	let javaInstalled = false;
 	try {
 		await $`java -version`.quiet();
+		javaInstalled = true;
 	} catch {
-		log("red", "Error: Java is not installed!");
-		log("yellow", "Install Java to continue.");
+		log("red", "Java is not installed. Attempting automatic installation...");
+		console.log();
+
+		const platform = process.platform;
+		let installSuccess = false;
+
+		if (platform === "darwin") {
+			// macOS - try Brew
+			log("blue", "Detected macOS. Attempting to install Java via Homebrew...");
+			try {
+				await $`brew install openjdk`.quiet();
+				log("green", "  ✓ Java installed via Homebrew");
+				installSuccess = true;
+			} catch {
+				log("yellow", "  ⚠ Homebrew installation failed");
+			}
+		} else if (platform === "win32") {
+			// Windows - try Chocolatey
+			log("blue", "Detected Windows. Attempting to install Java via Chocolatey...");
+			try {
+				await $`choco install openjdk -y`.quiet();
+				log("green", "  ✓ Java installed via Chocolatey");
+				installSuccess = true;
+			} catch {
+				log("yellow", "  ⚠ Chocolatey installation failed");
+			}
+		}
+
+		if (!installSuccess) {
+			console.log();
+			log("yellow", "Automatic installation failed. Please install Java manually:");
+			console.log();
+
+			if (platform === "darwin") {
+				log("yellow", "macOS users can install via Homebrew:");
+				log("cyan", "  brew install openjdk");
+				console.log();
+				log("yellow", "Or download from:");
+				log("cyan", "  https://adoptium.net/");
+			} else if (platform === "win32") {
+				log("yellow", "Windows users can install via Chocolatey:");
+				log("cyan", "  choco install openjdk");
+				console.log();
+				log("yellow", "Or download from:");
+				log("cyan", "  https://adoptium.net/");
+				log("cyan", "  https://www.oracle.com/java/technologies/downloads/");
+			} else {
+				log("yellow", "Linux users can install via package manager or download from:");
+				log("cyan", "  https://adoptium.net/");
+			}
+
+			console.log();
+			process.exit(1);
+		}
+
+		// Verify Java is now installed
+		try {
+			await $`java -version`.quiet();
+			javaInstalled = true;
+		} catch {
+			log("red", "Error: Java installation verification failed.");
+			log("yellow", "Please restart your terminal and try again.");
+			process.exit(1);
+		}
+	}
+
+	if (!javaInstalled) {
 		process.exit(1);
 	}
 
